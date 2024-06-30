@@ -8,14 +8,19 @@ pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 EMBEDDING_DIMENSION = 1536
 
 def embed_chunks_and_upload_to_pinecone(chunks, index_name):
-    
-    if index_name in pc.list_indexes():
-        print("\nIndex already exists. Deleting index ...")
-        pc.delete_index(name=index_name)
-    
+    if pc.list_indexes():    
+        if index_name in pc.list_indexes()[0]['name']:
+            print("\nIndex already exists. Deleting index ...")
+            pc.delete_index(name=index_name)
     print("\nCreating a new index: ", index_name)
     pc.create_index(name=index_name,
-                          dimension=EMBEDDING_DIMENSION, metric='cosine')
+                          dimension=EMBEDDING_DIMENSION, 
+                          spec=ServerlessSpec(
+                              cloud='aws',
+                              region='us-east-1'
+                          ), 
+                          metric='cosine'
+                          )
 
     index = pc.Index(index_name)
     # print(index.describe_index_stats())
@@ -39,7 +44,12 @@ def get_most_similar_chunks_for_query(query, index_name):
 
     print("\nQuerying Pinecone index ...")
     index = pc.Index(index_name)
-    query_results = index.query(question_embedding, top_k=3, include_metadata=True)
+    query_results = index.query(
+        vector=[question_embedding],
+        top_k=3, 
+        include_values=True, 
+        include_metadata=True
+        )
     context_chunks = [x['metadata']['chunk_text'] for x in query_results['matches']]
 
     return context_chunks   
