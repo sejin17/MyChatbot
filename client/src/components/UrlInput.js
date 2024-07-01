@@ -13,12 +13,16 @@ function UrlInput({ onSubmit }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
         },
         body: JSON.stringify({ url }),
       });
       if (response.ok) {
         const data = await response.json();
         setResponseMessage(data.message);
+        console.log('URL submitted successfully, calling onSubmit');
         onSubmit();
       } else {
         setResponseMessage('Error: Something went wrong.');
@@ -30,7 +34,7 @@ function UrlInput({ onSubmit }) {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="urlinput">
       <form onSubmit={handleSubmit}>

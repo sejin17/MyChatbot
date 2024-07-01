@@ -56,7 +56,36 @@ function ChatInterface() {
     }
   };
 
+  return (
+    <div className="chat-container">
+      <header className="chat-header">URL Question & Answer</header>
+      {
+        messages.length === 0 
+          && 
+        <div className="chat-message bot-message">
+          <p className="initial-message">Hi there! I'm a bot trained to answer questions about the URL you entered. Try asking me a question below!</p>
+        </div>
+      }
+      <div className="chat-messages">
+        {messages.map((message, index) => (
+          <ChatMessage key={index} message={message} />
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+      <form className="chat-input" onSubmit={handleSendMessage}>
+        <input
+          type="text"
+          placeholder="Type a question and press enter ..."
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+        />
+
+      </form>
+    </div>
+  );
+
 
 }
 
 export default ChatInterface;
+

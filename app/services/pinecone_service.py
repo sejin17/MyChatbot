@@ -4,6 +4,7 @@ import os
 
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
+pc = Pinecone(api_key=PINECONE_API_KEY)
 
 EMBEDDING_DIMENSION = 1536
 
@@ -23,7 +24,6 @@ def embed_chunks_and_upload_to_pinecone(chunks, index_name):
                           )
 
     index = pc.Index(index_name)
-    # print(index.describe_index_stats())
 
     # Embedding each chunk and preparing for upload
     print("\nEmbedding chunks using OpenAI ...")
